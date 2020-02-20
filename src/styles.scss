@@ -34,15 +34,26 @@ $divveyo-app-theme: 	mat-light-theme($divveyo-app-primary, $divveyo-app-accent, 
 }
 
 // ******************************
-table {
-    width: 100%;
-  }
-  
-  .mat-form-field {
-    font-size: 14px;
-    width: 100%;
-  }
-  
-  td, th {
-    width: 25%;
-  }
+.w-100 {
+  width: 100%;
+}
+
+.has-padding {
+  padding: 0 8px;;
+}
+
+.img-fluid {
+  display: block;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.wrapper {
+  max-width: 95%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.form-card {
+  margin-top: 20px;
+}
