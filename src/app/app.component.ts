@@ -1,24 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
-
-export interface UserData {
-  id: string;
-  name: string;
-  progress: string;
-  color: string;
-}
-
-/** Constants used to fill up our data base. */
-const COLORS: string[] = [
-  'maroon', 'red', 'orange', 'yellow', 'olive', 'green', 'purple', 'fuchsia', 'lime', 'teal',
-  'aqua', 'blue', 'navy', 'black', 'gray'
-];
-const NAMES: string[] = [
-  'Maia', 'Asher', 'Olivia', 'Atticus', 'Amelia', 'Jack', 'Charlotte', 'Theodore', 'Isla', 'Oliver',
-  'Isabella', 'Jasper', 'Cora', 'Levi', 'Violet', 'Arthur', 'Mia', 'Thomas', 'Elizabeth'
-];
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 
 @Component({
   selector: 'app-root',
@@ -27,44 +9,62 @@ const NAMES: string[] = [
 })
 
 export class AppComponent implements OnInit {
-  displayedColumns: string[] = ['id', 'name', 'progress', 'color'];
-  dataSource: MatTableDataSource<UserData>;
 
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  educationTypes: any[] = [
+    { value: 'psc', viewValue: 'PSC' },
+    { value: 'jsc', viewValue: 'JSC' },
+    { value: 'ssc', viewValue: 'SSC' },
+    { value: 'hsc', viewValue: 'HSC' }
+  ];
 
-  constructor() {
-    // Create 100 users
-    const users = Array.from({ length: 100 }, (_, k) => createNewUser(k + 1));
+  departments: any[] = [
+    { value: 'sewing', viewValue: 'Sewing' },
+    { value: 'knitting', viewValue: 'Knitting' },
+    { value: 'linking', viewValue: 'Linking' }
+  ];
 
-    // Assign the data to the data source for the table to render
-    this.dataSource = new MatTableDataSource(users);
+  units: any[] = [
+    { value: 1, viewValue: 1 },
+    { value: 2, viewValue: 2 },
+    { value: 3, viewValue: 3 },
+    { value: 4, viewValue: 4 },
+    { value: 5, viewValue: 5 }
+  ];
+
+  // reactive form group
+  registerForm = this.formBuilder.group({
+    trackingNo: [''],
+    name: [''],
+    dob: [''],
+    age: [''],
+    education: [''],
+    assesmentDate: [''],
+    joinDate: [''],
+    department: [''],
+    unit: [''],
+    fingerId: ['']
+  });
+
+  constructor(private formBuilder: FormBuilder) { }
+
+  ngOnInit() { }
+
+  onSubmit() {
+    console.log('form submitted');
+    const values = this.registerForm.value;
+    console.log('form value', values);
   }
 
-  ngOnInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+  onDateOfBirthChage(event: MatDatepickerInputEvent<Date>) {
+    const age = this.calculateAge(event.value);
+    this.registerForm.patchValue({ age });
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
+  calculateAge(dob: Date): string {
+    const diffMs = Date.now() - dob.getTime();
+    const ageDt = new Date(diffMs);
+    const age = Math.abs(ageDt.getUTCFullYear() - 1970);
+    return `${age} years`;
   }
-}
 
-/**Builds and returns a new User. */
-function createNewUser(id: number): UserData {
-  const name = NAMES[Math.round(Math.random() * (NAMES.length - 1))] + ' ' +
-    NAMES[Math.round(Math.random() * (NAMES.length - 1))].charAt(0) + '.';
-
-  return {
-    id: id.toString(),
-    name: name,
-    progress: Math.round(Math.random() * 100).toString(),
-    color: COLORS[Math.round(Math.random() * (COLORS.length - 1))]
-  };
 }
